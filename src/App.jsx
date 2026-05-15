@@ -187,7 +187,9 @@ function App() {
 
   useEffect(() => {
     if (introStage !== 1) return;
-    const t = setTimeout(() => setIntroStage(2), 1700);
+    // Hold long enough for the per-letter entry animation to fully land,
+    // and the rule sweep to complete, before we begin the exit.
+    const t = setTimeout(() => setIntroStage(2), 2200);
     return () => clearTimeout(t);
   }, [introStage]);
 
@@ -195,6 +197,15 @@ function App() {
     if (introStage === 2 && lenisRef.current) {
       lenisRef.current.start();
     }
+  }, [introStage]);
+
+  useEffect(() => {
+    if (introStage < 2) {
+      document.body.classList.add('app-entering');
+    } else {
+      document.body.classList.remove('app-entering');
+    }
+    return () => document.body.classList.remove('app-entering');
   }, [introStage]);
 
   useEffect(() => {
@@ -483,6 +494,17 @@ function App() {
           <span className="si-divider" />
           <span className="si-total">{String(SECTIONS.length).padStart(2, '0')}</span>
           <span className="si-name">{sectionLabels[currentSection.id] || ''}</span>
+        </div>
+      )}
+
+      {isReady && (
+        <div
+          className="brand-credit"
+          style={{ opacity: scrollFraction > 0.86 ? 1 : 0 }}
+          aria-hidden={scrollFraction <= 0.86}
+        >
+          <span className="bc-prefix">Powered by</span>
+          <span className="bc-name">Kevnit Digital Solutions</span>
         </div>
       )}
 

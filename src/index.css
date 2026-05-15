@@ -238,7 +238,8 @@ canvas { width: 100%; height: 100%; display: block; }
   align-items: center;
   justify-content: center;
   opacity: 1;
-  transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Background fades last, after the children have lifted away. */
+  transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.6s;
 }
 
 .intro-overlay::before {
@@ -368,6 +369,106 @@ canvas { width: 100%; height: 100%; display: block; }
   position: relative;
   color: var(--white-55);
   animation: introPulse 1.8s ease-in-out infinite;
+}
+
+/* Stage 2 — staggered exit: each element lifts and blurs out before the
+   background finishes fading, so the page reveal feels engineered, not abrupt. */
+.intro-stage-2 .intro-eyebrow {
+  opacity: 0;
+  transform: translateY(-10px);
+  filter: blur(4px);
+  transition: opacity 0.55s ease, transform 0.65s cubic-bezier(0.7, 0, 0.84, 0), filter 0.55s ease;
+}
+
+.intro-stage-2 .intro-wordmark span {
+  animation: introLetterExit 0.85s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+.intro-stage-2 .intro-wordmark span:nth-child(1)  { animation-delay: 0.06s; }
+.intro-stage-2 .intro-wordmark span:nth-child(2)  { animation-delay: 0.10s; }
+.intro-stage-2 .intro-wordmark span:nth-child(3)  { animation-delay: 0.14s; }
+.intro-stage-2 .intro-wordmark span:nth-child(4)  { animation-delay: 0.18s; }
+.intro-stage-2 .intro-wordmark span:nth-child(5)  { animation-delay: 0.22s; }
+.intro-stage-2 .intro-wordmark span:nth-child(6)  { animation-delay: 0.26s; }
+.intro-stage-2 .intro-wordmark span:nth-child(7)  { animation-delay: 0.30s; }
+.intro-stage-2 .intro-wordmark span:nth-child(8)  { animation-delay: 0.34s; }
+.intro-stage-2 .intro-wordmark span:nth-child(9)  { animation-delay: 0.38s; }
+.intro-stage-2 .intro-wordmark span:nth-child(10) { animation-delay: 0.42s; }
+.intro-stage-2 .intro-wordmark .intro-period { animation-delay: 0.48s; }
+
+.intro-stage-2 .intro-rule-fill {
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform 0.7s cubic-bezier(0.7, 0, 0.84, 0) 0.15s;
+}
+
+.intro-stage-2 .intro-meta {
+  opacity: 0;
+  transform: translateY(-6px);
+  filter: blur(3px);
+  transition: opacity 0.5s ease 0.1s, transform 0.6s cubic-bezier(0.7, 0, 0.84, 0) 0.1s, filter 0.5s ease 0.1s;
+}
+
+@keyframes introLetterExit {
+  to {
+    opacity: 0;
+    transform: translateY(-46px) rotateX(70deg) scale(0.92);
+    filter: blur(10px);
+  }
+}
+
+/* Underlying experience scales in subtly as the overlay clears,
+   so the page emerges rather than appearing all at once. */
+.canvas-container,
+.text-overlay {
+  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.4s,
+              transform 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
+}
+
+body.app-entering .canvas-container,
+body.app-entering .text-overlay {
+  opacity: 0;
+  transform: scale(0.97);
+  transform-origin: 50% 55%;
+}
+
+/* Brand credit — bottom-left corner, only at the end of the experience. */
+.brand-credit {
+  position: fixed;
+  left: 3.5vw;
+  bottom: 3.5vh;
+  z-index: 40;
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  pointer-events: none;
+  mix-blend-mode: plus-lighter;
+  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bc-prefix {
+  font-family: var(--sans);
+  font-size: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.42em;
+  color: var(--white-30);
+  text-indent: 0.42em;
+}
+
+.bc-name {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 14;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  color: var(--white-55);
+}
+
+@media (max-width: 768px) {
+  .brand-credit { left: 6vw; bottom: 9vh; gap: 0.5rem; }
+  .bc-prefix { font-size: 0.45rem; letter-spacing: 0.32em; }
+  .bc-name { font-size: 0.65rem; }
 }
 
 @keyframes introEyebrow {
