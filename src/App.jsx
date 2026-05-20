@@ -3,10 +3,11 @@ import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import './index.css';
 
-const FRAME_COUNT = 240;
+const FRAME_COUNT = 495;
 
-const currentFrame = (index) =>
-  `/frames/frame_${index.toString().padStart(4, '0')}.jpg`;
+const currentFrame = (index) => {
+  return `/frames/frame_${index.toString().padStart(4, '0')}.jpg`;
+};
 
 const SECTIONS = [
   {
@@ -14,46 +15,46 @@ const SECTIONS = [
     start: 0.02,
     end: 0.15,
     position: 'right',
-    headline: 'The Chaos of Choice.',
-    body: 'In a market saturated with fragmented vendors and legacy debt, the path forward is often obscured by noise. For US businesses, finding the right APAC partner should not feel like a shot in the dark.',
-    clarity: 'We enter the void to identify the signal within the noise.',
+    headline: 'The Foundation.',
+    body: 'Every great business needs a solid foundation to build upon. In a market saturated with fragmented vendors and legacy debt, the path forward is often obscured by noise.',
+    clarity: 'Identify the signal within the noise.',
   },
   {
     id: 'crystallization',
     start: 0.20,
     end: 0.36,
     position: 'bottom-left',
-    headline: 'Engineering Certainty.',
-    body: "Scalestone is the filter. We don't just find vendors; we crystallize your requirements into a high-performance roadmap. We vet the elite 1% of technical talent so your strategy has a solid foundation.",
-    clarity: 'Turning scattered potential into structural strength.',
+    headline: 'The Challenge.',
+    body: "Building that foundation requires the right partners and the right tools. We vet the elite 1% of technical talent so your strategy has a solid, unshakeable base.",
+    clarity: 'Turning potential into structural strength.',
   },
   {
     id: 'refraction',
     start: 0.42,
     end: 0.58,
     position: 'top-left',
-    headline: 'One Vision. Four Directions.',
-    body: 'Our expertise refracts your singular goal into specialized workstreams. From high-level Strategy and precision Vetting to cross-border Scaling and final Delivery.',
-    clarity: 'Complexity, refined into a spectrum of action.',
+    headline: 'The Solution.',
+    body: 'Scalestone provides the structural integrity your strategy demands. Our expertise refines your singular goal into specialized workstreams, delivering precision at every scale.',
+    clarity: 'Complexity, refined into action.',
   },
   {
     id: 'extension',
     start: 0.62,
     end: 0.76,
     position: 'bottom-left',
-    headline: 'Beyond the Horizon.',
-    body: 'Transformation is a trajectory, not a destination. We provide the ongoing momentum needed to modernize legacy systems and dominate the US-APAC corridor.',
-    clarity: 'Your growth, clearly defined and infinitely scalable.',
+    headline: 'The Cornerstone.',
+    body: 'We are the cornerstone you need for the foundation of your business. We provide the ongoing momentum needed to modernize legacy systems and dominate your market.',
+    clarity: 'Your growth, infinitely scalable.',
   },
   {
     id: 'hook',
     start: 0.84,
     end: 1.0,
-    position: 'top-center-hero',
-    headline: 'The journey begins now.',
-    body: 'We are currently architecting a closed-loop marketplace featuring 1,000+ curated vendor intelligence profiles.',
+    position: 'left',
+    headline: "Let's build something enduring.",
+    body: 'We are currently architecting a closed-loop marketplace featuring curated vendor intelligence profiles, ready to serve as your foundation.',
     clarity: null,
-    brandCenter: 'SCALESTONE',
+    darkText: true,
   },
 ];
 
@@ -299,8 +300,9 @@ function App() {
     gl.uniform1i(uTex, 0);
 
     const setCanvasSize = () => {
-      glCanvas.width = window.innerWidth;
-      glCanvas.height = window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      glCanvas.width = window.innerWidth * dpr;
+      glCanvas.height = window.innerHeight * dpr;
       offCanvas.width = window.innerWidth;
       offCanvas.height = window.innerHeight;
       gl.viewport(0, 0, glCanvas.width, glCanvas.height);
@@ -329,23 +331,6 @@ function App() {
 
       context.clearRect(0, 0, offCanvas.width, offCanvas.height);
       context.drawImage(img, x, y, rw, rh);
-
-      let maskAmt = 0;
-      if (index < FRAME_COUNT * 0.15) {
-        maskAmt = 1 - (index / (FRAME_COUNT * 0.15));
-      } else if (index > FRAME_COUNT * 0.8) {
-        maskAmt = (index - FRAME_COUNT * 0.8) / (FRAME_COUNT * 0.2);
-      }
-      if (maskAmt > 0) {
-        const maskHeight = offCanvas.height * 0.12 * maskAmt;
-        context.fillStyle = '#030303';
-        context.fillRect(0, 0, offCanvas.width, maskHeight);
-        const grad = context.createLinearGradient(0, maskHeight - 20, 0, maskHeight + 40);
-        grad.addColorStop(0, '#030303');
-        grad.addColorStop(1, 'transparent');
-        context.fillStyle = grad;
-        context.fillRect(0, maskHeight - 20, offCanvas.width, 60);
-      }
     };
 
     const renderGL = (vel) => {
@@ -559,7 +544,7 @@ function App() {
               )}
 
               <div
-                className={`section-block section-${s.position}`}
+                className={`section-block section-${s.position} ${s.darkText ? 'dark-text' : ''}`}
                 style={{
                   opacity: headlineOpacity,
                   transform: `${posConfig.base} translate3d(${px}px, ${py}px, 0) rotate(${rotZ}deg)`,

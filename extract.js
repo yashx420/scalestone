@@ -7,7 +7,8 @@ import ffmpeg from 'ffmpeg-static';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const videoPath = path.resolve(__dirname, '..', 'Untitled design.mp4');
+const videoPath1 = path.resolve(__dirname, 'public', 'flow.mp4');
+const videoPath2 = path.resolve(__dirname, 'public', 'mp_.mp4');
 const publicDir = path.resolve(__dirname, 'public');
 
 const TIERS = [
@@ -25,7 +26,8 @@ for (const tier of TIERS) {
   console.log(`\nExtracting ${tier.width}px frames → ${outDir}`);
   // -qscale:v 1 is ffmpeg's max-quality JPEG (lower number = higher quality).
   // scale=W:-2 preserves aspect ratio and forces an even height (required by some encoders).
-  const cmd = `"${ffmpeg}" -y -i "${videoPath}" -vf "fps=30,scale=${tier.width}:-2:flags=lanczos" -qscale:v 1 "${outDir}/frame_%04d.jpg"`;
+  const filter = `[0:v]scale=1280:720,fps=30,format=yuv420p,trim=start=0:end=7.5,setpts=PTS-STARTPTS[v0]; [1:v]scale=1280:720,fps=30,format=yuv420p,setpts=PTS-STARTPTS[v1]; [v0][v1]xfade=transition=fade:duration=1:offset=6.5[v_fade]; [v_fade]scale=${tier.width}:-2:flags=lanczos[out]`;
+  const cmd = `"${ffmpeg}" -y -i "${videoPath1}" -i "${videoPath2}" -filter_complex "${filter}" -map "[out]" -qscale:v 1 "${outDir}/frame_%04d.jpg"`;
   execSync(cmd, { stdio: 'inherit' });
 }
 
