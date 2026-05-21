@@ -24,5 +24,4 @@ dist-ssr
 *.sw?
 
 # Extracted frames
-public/frames/
 public/frames@2x/
